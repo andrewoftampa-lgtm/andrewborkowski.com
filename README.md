@@ -6,7 +6,9 @@ animated mesh-gradient canvas, with light and dark themes.
 
 Live at **[andrewborkowski.com](https://andrewborkowski.com)**.
 
-![Light theme: a frosted glass biography panel and circular portrait over a pastel mesh gradient](docs/screenshot-light.jpeg)
+| Dark (default) | Light |
+| --- | --- |
+| ![Dark theme: frosted glass panels over a deep blue and violet mesh gradient](docs/screenshot-dark.jpeg) | ![Light theme: frosted glass panels over a pastel mesh gradient](docs/screenshot-light.jpeg) |
 
 ## Run locally
 
