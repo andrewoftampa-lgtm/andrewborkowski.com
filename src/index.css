@@ -1,0 +1,368 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   GLASSMORPHISM DESIGN SYSTEM
+   Two layers: a vivid ambient canvas (AmbientBackground.tsx) and frosted
+   panels that sit on top of it. Every glass value is a token so the light
+   and dark themes stay in sync.
+   ========================================================================= */
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Canvas */
+  --canvas: #05060f;
+  --canvas-veil: rgba(5, 6, 15, 0.35);
+
+  /* Type */
+  --text-primary: #f4f7fb;
+  --text-secondary: #b9c5da;
+  --text-muted: #8a99b3;
+
+  /* Glass surfaces */
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-hover: rgba(255, 255, 255, 0.11);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-border-hover: rgba(255, 255, 255, 0.34);
+  --glass-rim: rgba(255, 255, 255, 0.2); /* inner top highlight */
+  --glass-specular: rgba(255, 255, 255, 0.55); /* crisp edge-light streak */
+  --glass-shadow: 0 24px 50px -26px rgba(2, 4, 20, 0.95);
+  --glass-shadow-hover: 0 34px 64px -26px rgba(2, 4, 20, 1);
+  /* Hairlines that must stay visible against the canvas, not the glass. */
+  --hairline: rgba(255, 255, 255, 0.28);
+
+  /* Chips, pills, icon wells */
+  --chip-bg: rgba(255, 255, 255, 0.07);
+  --chip-border: rgba(255, 255, 255, 0.14);
+
+  /* Accents */
+  --accent: #7dd3fc;
+  --accent-strong: #22d3ee;
+  --accent-soft: rgba(125, 211, 252, 0.16);
+  --accent-gradient: linear-gradient(120deg, #7dd3fc 0%, #a78bfa 52%, #5eead4 100%);
+  --accent-glow: 0 0 34px -6px rgba(125, 211, 252, 0.55);
+
+  --ease-glass: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.light {
+  color-scheme: light;
+
+  --canvas: #eef2fb;
+  --canvas-veil: rgba(255, 255, 255, 0.28);
+
+  --text-primary: #0d1526;
+  --text-secondary: #43536e;
+  --text-muted: #5c6b85;
+
+  /* Light glass is brighter and less transparent so text stays readable
+     over the saturated orbs beneath it. */
+  --glass-bg: rgba(255, 255, 255, 0.52);
+  --glass-bg-hover: rgba(255, 255, 255, 0.68);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-border-hover: rgba(255, 255, 255, 0.95);
+  --glass-rim: rgba(255, 255, 255, 0.9);
+  --glass-specular: rgba(255, 255, 255, 1);
+  --glass-shadow: 0 24px 50px -28px rgba(30, 50, 100, 0.45);
+  --glass-shadow-hover: 0 34px 64px -28px rgba(30, 50, 100, 0.55);
+  --hairline: rgba(15, 23, 42, 0.16);
+
+  --chip-bg: rgba(255, 255, 255, 0.55);
+  --chip-border: rgba(255, 255, 255, 0.85);
+
+  --accent: #2563eb;
+  --accent-strong: #0e7490;
+  --accent-soft: rgba(37, 99, 235, 0.12);
+  --accent-gradient: linear-gradient(120deg, #2563eb 0%, #7c3aed 52%, #0d9488 100%);
+  --accent-glow: 0 0 34px -8px rgba(37, 99, 235, 0.4);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    /* The rotating orbit rings have a bounding box wider than the ring
+       itself, which would otherwise open a sideways scroll on phones. */
+    overflow-x: clip;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: clip;
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    background-color: var(--canvas);
+    color: var(--text-primary);
+    transition: background-color 0.5s var(--ease-glass), color 0.5s var(--ease-glass);
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--canvas);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+}
+
+@layer components {
+  /* --- Core frosted surface --------------------------------------------- */
+  .glass {
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-rim);
+  }
+
+  /* --- Interactive glass card ------------------------------------------- */
+  .glass-card {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 1.5rem;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-rim);
+    transition: transform 0.45s var(--ease-glass), background-color 0.45s var(--ease-glass),
+      border-color 0.45s var(--ease-glass), box-shadow 0.45s var(--ease-glass);
+  }
+
+  /* Specular streak along the top edge — the tell of a real glass pane. */
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 1.75rem;
+    right: 1.75rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glass-specular), transparent);
+    opacity: 0.75;
+    transition: opacity 0.45s var(--ease-glass);
+    pointer-events: none;
+  }
+
+  /* Light bloom that fades in behind the top-right corner on hover. */
+  .glass-card::after {
+    content: "";
+    position: absolute;
+    top: -45%;
+    right: -30%;
+    width: 22rem;
+    height: 22rem;
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 68%);
+    opacity: 0;
+    transition: opacity 0.45s var(--ease-glass);
+    pointer-events: none;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-3px);
+    background-color: var(--glass-bg-hover);
+    border-color: var(--glass-border-hover);
+    box-shadow: var(--glass-shadow-hover), inset 0 1px 0 var(--glass-rim), var(--accent-glow);
+  }
+
+  .glass-card:hover::before {
+    opacity: 1;
+  }
+
+  .glass-card:hover::after {
+    opacity: 1;
+  }
+
+  /* --- Small frosted pieces: pills, badges, icon wells ------------------- */
+  .glass-chip {
+    background-color: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    box-shadow: inset 0 1px 0 var(--glass-rim);
+    transition: background-color 0.45s var(--ease-glass), border-color 0.45s var(--ease-glass),
+      color 0.45s var(--ease-glass), transform 0.45s var(--ease-glass);
+  }
+
+  .glass-button {
+    background-color: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    box-shadow: inset 0 1px 0 var(--glass-rim);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color 0.35s var(--ease-glass), border-color 0.35s var(--ease-glass),
+      transform 0.35s var(--ease-glass), box-shadow 0.35s var(--ease-glass);
+  }
+
+  .glass-button:hover {
+    background-color: var(--glass-bg-hover);
+    border-color: var(--glass-border-hover);
+    transform: translateY(-2px);
+    box-shadow: inset 0 1px 0 var(--glass-rim), var(--accent-glow);
+  }
+
+  /* --- Gradient text ---------------------------------------------------- */
+  .text-gradient {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* --- Hairline divider between sections -------------------------------- */
+  .glass-divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--hairline) 18%,
+      var(--hairline) 82%,
+      transparent
+    );
+  }
+
+  /* --- Ambient canvas --------------------------------------------------- */
+  .orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    will-change: transform;
+  }
+
+  /* Fine film grain keeps the large blurred gradients from banding. */
+  .grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.22;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Faint scientific dot grid, carried over from the original design. */
+  .dot-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(var(--hairline) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.5;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 40%, transparent 100%);
+  }
+}
+
+/* --- Motion ------------------------------------------------------------- */
+@keyframes drift-a {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(6%, 8%, 0) scale(1.12);
+  }
+}
+
+@keyframes drift-b {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-8%, -6%, 0) scale(0.95);
+  }
+}
+
+@keyframes drift-c {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.95);
+  }
+  100% {
+    transform: translate3d(5%, -9%, 0) scale(1.15);
+  }
+}
+
+@keyframes spin-cw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-ccw {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse-node {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-drift-a {
+  animation: drift-a 22s var(--ease-glass) infinite alternate;
+}
+.animate-drift-b {
+  animation: drift-b 26s var(--ease-glass) infinite alternate;
+}
+.animate-drift-c {
+  animation: drift-c 30s var(--ease-glass) infinite alternate;
+}
+.animate-spin-cw {
+  animation: spin-cw 34s linear infinite;
+}
+.animate-spin-ccw {
+  animation: spin-ccw 44s linear infinite;
+}
+.animate-pulse-node {
+  animation: pulse-node 3s ease-in-out infinite;
+}
+.animate-rise-in {
+  animation: rise-in 0.7s var(--ease-glass) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

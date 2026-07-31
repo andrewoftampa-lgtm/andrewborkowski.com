@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Andrew A. Borkowski, M.D. | AI Curriculum Director | USF Morsani College of Medicine</title>
+    <meta
+      name="description"
+      content="Professional portfolio of Dr. Andrew Borkowski, Professor of Pathology, Medicine, and Surgery at USF Morsani College of Medicine. AI Education, AI Governance, and AI Safety."
+    />
+
+    <!-- Preconnect for premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Apply the stored theme before first paint to avoid a flash. -->
+    <script>
+      if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.add('light');
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
