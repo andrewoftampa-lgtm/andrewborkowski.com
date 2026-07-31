@@ -21,9 +21,12 @@
 
     <!-- Apply the stored theme before first paint to avoid a flash. -->
     <script>
-      if (localStorage.getItem('theme') === 'light') {
-        document.documentElement.classList.add('light');
-      }
+      // Reading storage throws where site data is blocked; fall back to dark.
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light');
+        }
+      } catch {}
     </script>
   </head>
 

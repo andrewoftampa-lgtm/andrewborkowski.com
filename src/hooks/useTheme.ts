@@ -18,8 +18,13 @@ export function useTheme() {
   );
 
   useEffect(() => {
+    // Applied first, so the theme still works even if persistence fails.
     document.documentElement.classList.toggle('light', theme === 'light');
-    localStorage.setItem('theme', theme);
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {
+      // Site data blocked: the choice applies but won't survive a reload.
+    }
   }, [theme]);
 
   const toggleTheme = useCallback(
