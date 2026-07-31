@@ -14,8 +14,10 @@ export function AmbientBackground() {
     <div
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {/* Base wash — a wide mesh gradient behind everything else. */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_15%_0%,rgba(56,189,248,0.30),transparent_60%),radial-gradient(ellipse_80%_60%_at_85%_15%,rgba(167,139,250,0.28),transparent_60%),radial-gradient(ellipse_90%_70%_at_50%_100%,rgba(45,212,191,0.22),transparent_65%)]" />
+      {/* Base wash — a wide mesh gradient behind everything else. On phones
+          this one element carries the whole canvas: see .mesh-wash in
+          index.css, where the orb colours are baked into it as extra stops. */}
+      <div className="mesh-wash absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_15%_0%,rgba(56,189,248,0.30),transparent_60%),radial-gradient(ellipse_80%_60%_at_85%_15%,rgba(167,139,250,0.28),transparent_60%),radial-gradient(ellipse_90%_70%_at_50%_100%,rgba(45,212,191,0.22),transparent_65%)]" />
 
       {/* Drifting orbs. */}
       <div className="orb animate-drift-a -top-40 -left-32 h-[34rem] w-[34rem] bg-sky-400/35" />

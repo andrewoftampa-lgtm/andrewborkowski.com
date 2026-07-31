@@ -283,37 +283,79 @@ html.light {
   /* ---------------------------------------------------------------------
      Phones and other touch devices.
 
-     Mobile Safari composites every backdrop-filter into its own offscreen
-     buffer, and the full-page blend group forces the whole document through
-     an extra pass on each frame. Twenty-two blurred surfaces plus five
-     animated 600px blurs was enough to make Safari discard and reload the
-     tab. These cuts are invisible at phone size but remove most of the work.
+     backdrop-filter is removed outright here rather than merely reduced.
+     The background sits in a position:fixed layer, so on every scroll frame
+     each frosted surface has to re-sample a backdrop that just moved — the
+     cost scales with scrolling, which is why lowering the blur radius alone
+     did not help. The panels compensate with more opaque fills, which is
+     what desktop Chrome was already showing for this entire project while
+     the standard property was missing: nobody could tell.
      --------------------------------------------------------------------- */
   @media (max-width: 900px), (pointer: coarse) {
-    /* Chips are small; nobody can see a blur through a 48px pill. */
-    .glass-chip,
-    .glass-button {
-      backdrop-filter: none;
-    }
-
-    /* Cards keep their frosting, at a cheaper radius. */
     .glass,
-    .glass-card {
-      backdrop-filter: blur(10px) saturate(150%);
+    .glass-card,
+    .glass-chip,
+    .glass-button,
+    [class*="backdrop-blur"] {
+      backdrop-filter: none !important;
     }
 
-    /* A blend group spanning the viewport is the single most expensive
-       thing on the page; plain alpha reads almost the same. */
-    .grain {
-      mix-blend-mode: normal;
-      opacity: 0.1;
+    /* The header is the one surface with content moving underneath it, so
+       without a blur to obscure them it needs a near-solid fill. */
+    header.glass {
+      background-color: var(--surface-solid);
     }
 
-    /* Fewer, smaller, still blurs — but no longer animating. */
-    .orb {
-      filter: blur(60px);
+    /* The base mesh wash alone carries the look at phone size. Dropping the
+       orbs removes five large blurred textures from GPU memory; the grain
+       and dot grid each force an extra offscreen pass (blend group, mask). */
+    .orb,
+    .grain,
+    .dot-grid {
+      display: none;
+    }
+
+    /* Nothing should animate forever on a phone. */
+    .animate-spin-cw,
+    .animate-spin-ccw,
+    .animate-pulse-node {
       animation: none !important;
     }
+
+    /* The orbs' colour, painted into the wash as extra gradient stops. Soft
+       stops imitate the blur, so the canvas stays vivid for one paint and
+       no filter, no layer, no animation. */
+    .mesh-wash {
+      background-image: radial-gradient(
+          70% 45% at 10% 4%,
+          rgba(56, 189, 248, 0.5),
+          transparent 72%
+        ),
+        radial-gradient(65% 40% at 92% 14%, rgba(167, 139, 250, 0.5), transparent 72%),
+        radial-gradient(60% 35% at 18% 46%, rgba(45, 212, 191, 0.34), transparent 72%),
+        radial-gradient(65% 40% at 88% 66%, rgba(99, 102, 241, 0.42), transparent 72%),
+        radial-gradient(70% 45% at 38% 96%, rgba(217, 70, 239, 0.3), transparent 72%) !important;
+    }
+  }
+}
+
+/* Without live blur behind them, the panels need more of their own fill to
+   stay legible over the gradient. */
+@media (max-width: 900px), (pointer: coarse) {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-bg-hover: rgba(255, 255, 255, 0.14);
+    --chip-bg: rgba(255, 255, 255, 0.12);
+    --canvas-veil: rgba(5, 6, 15, 0.28);
+    --surface-solid: #070914;
+  }
+
+  html.light {
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-bg-hover: rgba(255, 255, 255, 0.85);
+    --chip-bg: rgba(255, 255, 255, 0.78);
+    --canvas-veil: rgba(255, 255, 255, 0.45);
+    --surface-solid: #f0f4fc;
   }
 }
 
