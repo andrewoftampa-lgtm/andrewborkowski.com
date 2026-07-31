@@ -4,6 +4,10 @@ Single-page professional portfolio, built with React 19, Vite, and Tailwind CSS 
 The visual style is glassmorphism: frosted translucent panels layered over an
 animated mesh-gradient canvas, with light and dark themes.
 
+Live at **[andrewborkowski.com](https://andrewborkowski.com)**.
+
+![Light theme: a frosted glass biography panel and circular portrait over a pastel mesh gradient](docs/screenshot-light.jpeg)
+
 ## Run locally
 
 **Prerequisites:** Node.js 20+
