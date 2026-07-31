@@ -42,7 +42,7 @@ export function Footer() {
               {...(link.external
                 ? {target: '_blank', rel: 'noopener noreferrer'}
                 : {})}
-              className="no-underline transition-colors duration-300 hover:text-[var(--accent-strong)]">
+              className="inline-flex min-h-11 items-center px-1 no-underline transition-colors duration-300 hover:text-[var(--accent-strong)]">
               {link.label}
             </a>
           ))}
@@ -50,7 +50,7 @@ export function Footer() {
           <a
             href="#header"
             aria-label="Scroll back to top"
-            className="glass-button flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-secondary)] no-underline">
+            className="glass-button flex h-11 w-11 items-center justify-center rounded-full text-[var(--text-secondary)] no-underline">
             <ChevronUp size={16} strokeWidth={2.5} />
           </a>
         </div>
